@@ -3,45 +3,33 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>3D Tree Presentation</title>
-    
+    <title>Tree Evolution</title>
     <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.4.0/model-viewer.min.js"></script>
-
     <style>
-        body, html {
-            margin: 0;
-            padding: 0;
-            width: 100%;
-            height: 100%;
-            overflow: hidden;
-            background-color: #1a1a1a; /* Сделал фон темнее для контраста */
-        }
-
-        model-viewer {
-            width: 100vw;
-            height: 100vh;
-            display: block;
-            cursor: pointer;
-        }
+        body, html { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background: #000; }
+        model-viewer { width: 100vw; height: 100vh; cursor: pointer; }
+        /* Скрываем все лишнее */
+        header, footer, .card, h1, p { display: none !important; }
     </style>
 </head>
 <body>
 
     <model-viewer 
         id="tree-viewer"
-        src="assets/models/tree_level_1.glb" 
-        alt="3D Tree Model"
+        src="public/assets/models/tree_level_1.glb" 
+        alt="3D Tree"
         auto-rotate 
         camera-controls
-        shadow-intensity="1"
-        disable-zoom
         touch-action="none">
     </model-viewer>
 
     <script>
-        // Путь изменен на assets/models/
-        const basePath = 'assets/models/';
-        const modelFiles = [
+        // ПОПРОБУЙТЕ ПОМЕНЯТЬ ЭТУ СТРОКУ, ЕСЛИ ОШИБКА ОСТАНЕТСЯ:
+        // Вариант А: 'public/assets/models/' 
+        // Вариант Б: 'assets/models/'
+        const folderPath = 'public/assets/models/'; 
+
+        const files = [
             'tree_level_1.glb',
             'tree_level_2.glb',
             'tree_level_3.glb',
@@ -49,23 +37,25 @@
             'tree_level_5.glb'
         ];
 
-        let currentIndex = 0;
+        let idx = 0;
         const viewer = document.getElementById('tree-viewer');
 
-        function nextModel() {
-            currentIndex = (currentIndex + 1) % modelFiles.length;
-            // Собираем полный путь
-            const newSrc = basePath + modelFiles[currentIndex];
-            viewer.src = newSrc;
-            console.log("Загружаю:", newSrc);
+        // Устанавливаем начальную модель правильно
+        viewer.src = folderPath + files[idx];
+
+        function swap() {
+            idx = (idx + 1) % files.length;
+            const newPath = folderPath + files[idx];
+            viewer.src = newPath;
+            console.log("Пытаюсь загрузить:", newPath);
         }
 
-        // Клик по экрану для переключения
-        window.addEventListener('click', nextModel);
+        window.addEventListener('click', swap);
+        window.addEventListener('keydown', (e) => { if(e.code === 'Space') swap(); });
 
-        // Пробел для переключения
-        window.addEventListener('keydown', (e) => {
-            if (e.code === 'Space') nextModel();
+        // Ловим ошибку загрузки, чтобы понять, какой путь не подошел
+        viewer.addEventListener('error', (event) => {
+            console.error("Ошибка загрузки модели по пути:", event.detail.url);
         });
     </script>
 </body>
