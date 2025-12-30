@@ -8,27 +8,20 @@
     <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.4.0/model-viewer.min.js"></script>
 
     <style>
-        /* Полностью скрываем интерфейс и отступы */
         body, html {
             margin: 0;
             padding: 0;
             width: 100%;
             height: 100%;
             overflow: hidden;
-            background-color: #f0f0f0; /* Цвет фона */
+            background-color: #1a1a1a; /* Сделал фон темнее для контраста */
         }
 
-        /* Растягиваем 3D плеер на весь экран */
         model-viewer {
             width: 100vw;
             height: 100vh;
             display: block;
-            cursor: pointer; /* Показываем, что на экран можно нажать */
-        }
-
-        /* Скрываем стандартные кнопки управления, если они появятся */
-        #ar-button, .slot {
-            display: none !important;
+            cursor: pointer;
         }
     </style>
 </head>
@@ -36,7 +29,7 @@
 
     <model-viewer 
         id="tree-viewer"
-        src="tree_level_1.glb" 
+        src="assets/models/tree_level_1.glb" 
         alt="3D Tree Model"
         auto-rotate 
         camera-controls
@@ -46,8 +39,9 @@
     </model-viewer>
 
     <script>
-        // Список ваших файлов по порядку
-        const models = [
+        // Путь изменен на assets/models/
+        const basePath = 'assets/models/';
+        const modelFiles = [
             'tree_level_1.glb',
             'tree_level_2.glb',
             'tree_level_3.glb',
@@ -58,23 +52,20 @@
         let currentIndex = 0;
         const viewer = document.getElementById('tree-viewer');
 
-        // Функция для переключения модели по кругу
         function nextModel() {
-            currentIndex = (currentIndex + 1) % models.length;
-            viewer.src = models[currentIndex];
-            console.log("Сейчас отображается:", models[currentIndex]);
+            currentIndex = (currentIndex + 1) % modelFiles.length;
+            // Собираем полный путь
+            const newSrc = basePath + modelFiles[currentIndex];
+            viewer.src = newSrc;
+            console.log("Загружаю:", newSrc);
         }
 
-        // Обработчик нажатия (клик или тап по экрану)
-        window.addEventListener('click', () => {
-            nextModel();
-        });
+        // Клик по экрану для переключения
+        window.addEventListener('click', nextModel);
 
-        // Дополнительно: переключение клавишей "Пробел"
+        // Пробел для переключения
         window.addEventListener('keydown', (e) => {
-            if (e.code === 'Space') {
-                nextModel();
-            }
+            if (e.code === 'Space') nextModel();
         });
     </script>
 </body>
